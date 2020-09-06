@@ -76,7 +76,7 @@ input:focus {
 
 div.mapview {
   height: 63vh;
-  background-color: purple;
+  background-color: #d3dfbc;
   z-index: 0;
 }
 

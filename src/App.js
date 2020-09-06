@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import "./App.css";
 import L from 'leaflet'
 import { ReactComponent as ArrowSvg } from "./img/icon-arrow.svg";
 import { Map, Marker, Popup, TileLayer } from 'react-leaflet'
+import Axios from "axios";
 const position = [34.0522, -118.2437]
 
 export const pointerIcon = new L.Icon({
@@ -17,7 +18,50 @@ export const pointerIcon = new L.Icon({
 })
 
 function App() {
-  
+  const [curIP, setCurIP] = useState('')
+  const [iP, setIP] = useState('')
+  const [cords, setCords] = React.useState([34.0522, -118.2437]);
+
+  useEffect(() => {
+    getCurrentIP()
+  }, [])
+  useEffect(() => {
+    getCordsFromIP(undefined);
+  }, [curIP])
+
+  const onSubmit = (e) => {
+    setIP(e.target.value);
+  }
+  const getCurrentIP = async () => {
+    const response = await Axios.get('https://www.cloudflare.com/cdn-cgi/trace');
+    const text = response.data.replace(/(\r\n|\n|\r)/gm, "=");
+      const arrayText =  text.split("=")
+      let ip = '';
+      arrayText.map((p,i)=>{
+        if(p.trim() === "ip"){
+          ip = arrayText[i+1]
+        }
+      })
+      setCurIP(ip)
+  }
+
+  const getCordsFromIP = async (ip) => {
+    // todo validate IP
+    let url = `http://api.ipstack.com/${ip}?access_key=${process.env.REACT_APP_IPSTACKKEY}&format=1`
+    if(ip !== undefined && ip.length !== 0){
+      url = `${url}${ip}`
+    } else {
+      url = `http://api.ipstack.com/${curIP}?access_key=${process.env.REACT_APP_IPSTACKKEY}&format=1`
+    }
+    try {
+      const response = await Axios.get(url)
+      setCords([response.data.latitude,response.data.longitude])
+    } catch (error) {
+      // console.log(error)
+    }
+
+  }
+
   return (
     <>
     <header>
@@ -25,8 +69,8 @@ function App() {
         <div className="form-area">
           <h1 className="text-h">IP Address Tracker</h1>
           <div className="searchbox">
-            <input placeholder="Search for any IP address or domain" />
-            <div className="button">
+            <input placeholder="Search for any IP address or domain" onChange={onSubmit} />
+            <div className="button" onClick={()=>{getCordsFromIP(iP)}}>
               <ArrowSvg />
             </div>
           </div>
@@ -62,12 +106,12 @@ function App() {
         </div>
       </div>
       {/* <div className="mapview"> */}
-      <Map center={position} zoom={19} className="mapview" >
+      <Map center={cords} zoom={19} className="mapview" >
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
       />
-        <Marker position={position} icon={pointerIcon}>
+        <Marker position={cords} icon={pointerIcon}>
           <Popup>
             A pretty CSS3 popup. <br /> Easily customizable.
           </Popup>

@@ -4,7 +4,6 @@ import L from 'leaflet'
 import { ReactComponent as ArrowSvg } from "./img/icon-arrow.svg";
 import { Map, Marker, Popup, TileLayer } from 'react-leaflet'
 import Axios from "axios";
-const position = [34.0522, -118.2437]
 
 export const pointerIcon = new L.Icon({
   iconUrl: require('./img/icon-location.svg'),
@@ -21,6 +20,11 @@ function App() {
   const [curIP, setCurIP] = useState('')
   const [iP, setIP] = useState('')
   const [cords, setCords] = React.useState([34.0522, -118.2437]);
+  const [locationInfo, setlocationInfo] = useState({
+    ipAddress: '192.212.174.101',
+    location: 'Brooklyn, NY 10001',
+    isp: ''
+  })
 
   useEffect(() => {
     getCurrentIP()
@@ -46,7 +50,6 @@ function App() {
   }
 
   const getCordsFromIP = async (ip) => {
-    // todo validate IP
     let url = `http://api.ipstack.com/${ip}?access_key=${process.env.REACT_APP_IPSTACKKEY}&format=1`
     if(ip !== undefined && ip.length !== 0){
       url = `${url}${ip}`
@@ -55,7 +58,14 @@ function App() {
     }
     try {
       const response = await Axios.get(url)
-      setCords([response.data.latitude,response.data.longitude])
+      if(response.data.zip){
+        setCords([response.data.latitude,response.data.longitude])
+        setlocationInfo({
+          ipAddress: response.data.ip,
+          location: `${response.data.region_name}, ${response.data.region_code} ${response.data.zip}`
+        })
+      }
+      
     } catch (error) {
       // console.log(error)
     }
@@ -77,17 +87,46 @@ function App() {
         </div>
       </div>
       <div className="card-area">
-        <div className="card-item-container">
+      {/* <div className="card-item-container"> */}
+        <div className="card-item">
+            <div className="card-title">IP ADDRESS</div>
+            <div className="card-border-wrapper">
+            <div className="card-value">{locationInfo.ipAddress ? locationInfo.ipAddress : "192.212.174.101"}</div>
+            <div className="card-right-border"></div>
+            </div>
+        </div>
+        <div className="card-item">
+            <div className="card-title">LOCATION</div>
+            <div className="card-border-wrapper">
+              <div className="card-value">{locationInfo.location ? locationInfo.location : "Brooklyn, NY 10001"}</div>
+              <div className="card-right-border"></div>
+              </div>
+          </div>
+          <div className="card-item">
+            <div className="card-title">TIMEZONE</div>
+            <div className="card-border-wrapper">
+            <div className="card-value">UTC -05:00</div>
+            <div className="card-right-border"></div>
+            </div>
+          </div>
+          <div className="card-item">
+            <div className="card-title">ISP</div>
+            <div className="card-value">SpaceX Starlink</div>
+          </div>
+
+        {/* </div> */}
+          {/* <div className="card-right-border"></div> */}
+        {/* <div className="card-item-container">
           <div className="card-item">
             <div className="card-title">IP ADDRESS</div>
-            <div className="card-value">192.212.174.101</div>
+            <div className="card-value">{locationInfo.ipAddress ? locationInfo.ipAddress : "192.212.174.101"}</div>
           </div>
           <div className="card-right-border"></div>
         </div>
         <div className="card-item-container">
           <div className="card-item">
             <div className="card-title">LOCATION</div>
-            <div className="card-value">Brooklyn, NY 10001</div>
+              <div className="card-value">{locationInfo.location ? locationInfo.location : "Brooklyn, NY 10001"}</div>
           </div>
           <div className="card-right-border"></div>
         </div>
@@ -103,9 +142,8 @@ function App() {
             <div className="card-title">ISP</div>
             <div className="card-value">SpaceX Starlink</div>
           </div>
-        </div>
+        </div> */}
       </div>
-      {/* <div className="mapview"> */}
       <Map center={cords} zoom={19} className="mapview" >
       <TileLayer
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -117,7 +155,6 @@ function App() {
           </Popup>
         </Marker>
       </Map>
-  {/* </div> */}
     </header>
     </>
   );

@@ -23,19 +23,23 @@ function App() {
   const [locationInfo, setlocationInfo] = useState({
     ipAddress: '192.212.174.101',
     location: 'Brooklyn, NY 10001',
-    isp: ''
+    isp: 'SpaceX Starlink',
+    timezone: 'UTC -05:00'
   })
 
   useEffect(() => {
     getCurrentIP()
   }, [])
   useEffect(() => {
-    getCordsFromIP(undefined);
+    if(curIP){
+      getCordsFromIP(curIP);
+    }
   }, [curIP])
 
   const onSubmit = (e) => {
     setIP(e.target.value);
   }
+  
   const getCurrentIP = async () => {
     const response = await Axios.get('https://www.cloudflare.com/cdn-cgi/trace');
     const text = response.data.replace(/(\r\n|\n|\r)/gm, "=");
@@ -50,19 +54,17 @@ function App() {
   }
 
   const getCordsFromIP = async (ip) => {
-    let url = `http://api.ipstack.com/${ip}?access_key=${process.env.REACT_APP_IPSTACKKEY}&format=1`
-    if(ip !== undefined && ip.length !== 0){
-      url = `${url}${ip}`
-    } else {
-      url = `http://api.ipstack.com/${curIP}?access_key=${process.env.REACT_APP_IPSTACKKEY}&format=1`
-    }
     try {
+    let url = `https://cors-anywhere.herokuapp.com/https://geo.ipify.org/api/v1?apiKey=${process.env.REACT_APP_IPFYKEY}&ipAddress=${ip !== undefined && ip.length !== 0 ? ip : curIP}`
       const response = await Axios.get(url)
-      if(response.data.zip){
-        setCords([response.data.latitude,response.data.longitude])
+      if(response.data.ip){
+        const {location,ip, isp} = response.data
+        setCords([location.lat,location.lng])
         setlocationInfo({
-          ipAddress: response.data.ip,
-          location: `${response.data.region_name}, ${response.data.region_code} ${response.data.zip}`
+          ipAddress: ip,
+          isp: isp,
+          location: `${location.city}, ${location.country} ${location.postalCode}`,
+          timezone: location.timezone
         })
       }
       
@@ -104,13 +106,13 @@ function App() {
           <div className="card-item">
             <div className="card-title">TIMEZONE</div>
             <div className="card-border-wrapper">
-            <div className="card-value">UTC -05:00</div>
+            <div className="card-value">{locationInfo.timezone ? locationInfo.timezone : "UTC -05:00"}</div>
             <div className="card-right-border"></div>
             </div>
           </div>
           <div className="card-item">
             <div className="card-title">ISP</div>
-            <div className="card-value">SpaceX Starlink</div>
+            <div className="card-value">{locationInfo.isp ? locationInfo.isp : "SpaceX Starlink"}</div>
           </div>
       </div>
       <Map center={cords} zoom={19} className="mapview" >

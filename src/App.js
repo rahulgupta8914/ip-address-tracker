@@ -113,36 +113,6 @@ function App() {
             <div className="card-title">ISP</div>
             <div className="card-value">SpaceX Starlink</div>
           </div>
-
-        {/* </div> */}
-          {/* <div className="card-right-border"></div> */}
-        {/* <div className="card-item-container">
-          <div className="card-item">
-            <div className="card-title">IP ADDRESS</div>
-            <div className="card-value">{locationInfo.ipAddress ? locationInfo.ipAddress : "192.212.174.101"}</div>
-          </div>
-          <div className="card-right-border"></div>
-        </div>
-        <div className="card-item-container">
-          <div className="card-item">
-            <div className="card-title">LOCATION</div>
-              <div className="card-value">{locationInfo.location ? locationInfo.location : "Brooklyn, NY 10001"}</div>
-          </div>
-          <div className="card-right-border"></div>
-        </div>
-        <div className="card-item-container">
-          <div className="card-item">
-            <div className="card-title">TIMEZONE</div>
-            <div className="card-value">UTC -05:00</div>
-          </div>
-          <div className="card-right-border"></div>
-        </div>
-        <div className="card-item-container">
-          <div className="card-item">
-            <div className="card-title">ISP</div>
-            <div className="card-value">SpaceX Starlink</div>
-          </div>
-        </div> */}
       </div>
       <Map center={cords} zoom={19} className="mapview" >
       <TileLayer

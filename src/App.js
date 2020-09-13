@@ -29,33 +29,26 @@ function App() {
 
   useEffect(() => {
     getCurrentIP()
-  }, [])
-  useEffect(() => {
-    if(curIP){
-      getCordsFromIP(curIP);
-    }
-  }, [curIP])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const onSubmit = (e) => {
     setIP(e.target.value);
   }
   
   const getCurrentIP = async () => {
-    const response = await Axios.get('https://www.cloudflare.com/cdn-cgi/trace');
-    const text = response.data.replace(/(\r\n|\n|\r)/gm, "=");
-      const arrayText =  text.split("=")
-      let ip = '';
-      arrayText.map((p,i)=>{
-        if(p.trim() === "ip"){
-          ip = arrayText[i+1]
-        }
-      })
-      setCurIP(ip)
+   try {
+    const response = await Axios.get('https://cors-anywhere.herokuapp.com/https://api.ipify.org/');
+    await getCordsFromIP(response.data)
+    setCurIP(response.data)
+   } catch (error) {
+    //  console.log({error})
+   }
   }
 
   const getCordsFromIP = async (ip) => {
     try {
-    let url = `https://cors-anywhere.herokuapp.com/https://geo.ipify.org/api/v1?apiKey=${process.env.REACT_APP_IPFYKEY}&ipAddress=${ip !== undefined && ip.length !== 0 ? ip : curIP}`
+    let url = `https://cors-anywhere.herokuapp.com/https://geo.ipify.org/api/v1?apiKey=${process.env.REACT_APP_IPFYKEY8484}&ipAddress=${ip !== undefined && ip.length !== 0 ? ip : curIP}`
       const response = await Axios.get(url)
       if(response.data.ip){
         const {location,ip, isp} = response.data
@@ -83,7 +76,7 @@ function App() {
     <>
     <header>
       <div className="search-area">
-        <div className="form-area">
+        {/* <div className="form-area">
           <h1 className="text-h">IP Address Tracker</h1>
           <div className="searchbox">
             <input placeholder="Search for any IP address or domain" onChange={onSubmit} />
@@ -91,10 +84,9 @@ function App() {
               <ArrowSvg />
             </div>
           </div>
-        </div>
+        </div> */}
       </div>
       <div className="card-area">
-      {/* <div className="card-item-container"> */}
         <div className="card-item">
             <div className="card-title">IP ADDRESS</div>
             <div className="card-border-wrapper">

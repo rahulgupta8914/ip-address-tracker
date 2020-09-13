@@ -55,7 +55,7 @@ function App() {
 
   const getCordsFromIP = async (ip) => {
     try {
-    let url = `https://cors-anywhere.herokuapp.com/https://geo.ipify.org/api/v1?apiKey=${process.env.REACT_APP_IPFYKEY}&ipAddress=${ip !== undefined && ip.length !== 0 ? ip : curIP}`
+    let url = `https://cors-anywhere.herokuapp.com/https://geo.ipify.org/api/v1?apiKey=${process.env.REACT_APP_IPFYKEYtty}&ipAddress=${ip !== undefined && ip.length !== 0 ? ip : curIP}`
       const response = await Axios.get(url)
       if(response.data.ip){
         const {location,ip, isp} = response.data
@@ -73,6 +73,12 @@ function App() {
     }
 
   }
+
+
+  const  truncate = (str, n=28) => {
+    return (str.length > n) ? `${str.substr(0, n-1)}...` : str;
+  };
+
   return (
     <>
     <header>
@@ -92,27 +98,27 @@ function App() {
         <div className="card-item">
             <div className="card-title">IP ADDRESS</div>
             <div className="card-border-wrapper">
-            <div className="card-value">{locationInfo.ipAddress ? locationInfo.ipAddress : "192.212.174.101"}</div>
+            <div className="card-value"><span>{locationInfo.ipAddress ? truncate(locationInfo.ipAddress) : "192.212.174.101"}</span></div>
             <div className="card-right-border"></div>
             </div>
         </div>
         <div className="card-item">
             <div className="card-title">LOCATION</div>
             <div className="card-border-wrapper">
-              <div className="card-value">{locationInfo.location ? locationInfo.location : "Brooklyn, NY 10001"}</div>
+              <div className="card-value"><span>{locationInfo.location ? truncate(locationInfo.location) : "Brooklyn, NY 10001"}</span></div>
               <div className="card-right-border"></div>
               </div>
           </div>
           <div className="card-item">
             <div className="card-title">TIMEZONE</div>
             <div className="card-border-wrapper">
-            <div className="card-value">{locationInfo.timezone ? locationInfo.timezone : "UTC -05:00"}</div>
+            <div className="card-value"><span>{locationInfo.timezone ? truncate(locationInfo.timezone) : "UTC -05:00"}</span></div>
             <div className="card-right-border"></div>
             </div>
           </div>
           <div className="card-item">
             <div className="card-title">ISP</div>
-            <div className="card-value">{locationInfo.isp ? locationInfo.isp : "SpaceX Starlink"}</div>
+            <div className="card-value"><span>{locationInfo.isp ? truncate(locationInfo.isp) : "SpaceX Starlink"}</span></div>
           </div>
       </div>
       <Map center={cords} zoom={19} className="mapview" >

@@ -55,7 +55,7 @@ function App() {
 
   const getCordsFromIP = async (ip) => {
     try {
-    let url = `https://cors-anywhere.herokuapp.com/https://geo.ipify.org/api/v1?apiKey=${process.env.REACT_APP_IPFYKEYtty}&ipAddress=${ip !== undefined && ip.length !== 0 ? ip : curIP}`
+    let url = `https://cors-anywhere.herokuapp.com/https://geo.ipify.org/api/v1?apiKey=${process.env.REACT_APP_IPFYKEY}&ipAddress=${ip !== undefined && ip.length !== 0 ? ip : curIP}`
       const response = await Axios.get(url)
       if(response.data.ip){
         const {location,ip, isp} = response.data

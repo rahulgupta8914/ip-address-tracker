@@ -48,7 +48,7 @@ function App() {
 
   const getCordsFromIP = async (ip) => {
     try {
-    let url = `https://cors-anywhere.herokuapp.com/https://geo.ipify.org/api/v1?apiKey=${process.env.REACT_APP_IPFYKEY8484}&ipAddress=${ip !== undefined && ip.length !== 0 ? ip : curIP}`
+    let url = `https://cors-anywhere.herokuapp.com/https://geo.ipify.org/api/v1?apiKey=${process.env.REACT_APP_IPFYKEY}&ipAddress=${ip !== undefined && ip.length !== 0 ? ip : curIP}`
       const response = await Axios.get(url)
       if(response.data.ip){
         const {location,ip, isp} = response.data
@@ -75,18 +75,17 @@ function App() {
   return (
     <>
     <header>
-      <div className="search-area">
-        {/* <div className="form-area">
-          <h1 className="text-h">IP Address Tracker</h1>
-          <div className="searchbox">
-            <input placeholder="Search for any IP address or domain" onChange={onSubmit} />
-            <div className="button" onClick={()=>{getCordsFromIP(iP)}}>
-              <ArrowSvg />
+      <div className="card-overlay">
+        <div className="form-area">
+            <h1 className="text-h">IP Address Tracker</h1>
+            <div className="searchbox">
+              <input placeholder="Search for any IP address or domain" onChange={onSubmit} />
+              <div className="button" onClick={()=>{getCordsFromIP(iP)}}>
+                <ArrowSvg />
+              </div>
             </div>
-          </div>
-        </div> */}
-      </div>
-      <div className="card-area">
+
+            <div className="card-area">
         <div className="card-item">
             <div className="card-title">IP ADDRESS</div>
             <div className="card-border-wrapper">
@@ -112,6 +111,12 @@ function App() {
             <div className="card-title">ISP</div>
             <div className="card-value"><span>{locationInfo.isp ? truncate(locationInfo.isp) : "SpaceX Starlink"}</span></div>
           </div>
+      </div>
+
+        </div>
+          
+      </div>
+      <div className="search-area">
       </div>
       <Map center={cords} zoom={19} className="mapview" >
       <TileLayer
